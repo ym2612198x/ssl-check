@@ -4,7 +4,6 @@ Wrapper for cURL and SSLscan for bulk checks with clean output
 usage: `sslcheck.py [-h] -i INPUT -o OUTPUT [-s] [-t] [-2] [-3] [-c] [-p] [-a] [-d]`
 ```
 options:
-  -h, --help            show this help message and exit
   -i INPUT, --input INPUT
                         List of IPs to check (can be a file with one IP per line, single IP or IP range) (default: None)
   -o OUTPUT, --output OUTPUT
