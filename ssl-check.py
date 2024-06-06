@@ -166,11 +166,11 @@ def check_alive(host):
     print(f"{INFO}[*] {DETAIL}{host}")
     if "Connection timed out" in output or "Failed to connect to" in output:
         print(f"{BAD}[-] Host is down{RST}")
-        print(output)
+        print(f"{INFO}[*] Output: {DETAIL}output{RST}")
         return False
     else:
         print(f"{GOOD}[+] Host is up{RST}")
-        print(output)
+        print(f"{INFO}[*] Output: {DETAIL}output{RST}")
         return True
 
 
