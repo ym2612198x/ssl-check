@@ -1,6 +1,8 @@
 # ssl-check
 Wrapper for cURL and SSLscan for bulk checks with clean output
 
+Based on original code by helpful and handsome jpredo (https://github.com/jpredo) ❤
+
 Usage: `sslcheck.py [-h] -i INPUT -o OUTPUT [-s] [-t] [-2] [-3] [-c] [-p] [-a] [-d]`
 Options:
 ```
