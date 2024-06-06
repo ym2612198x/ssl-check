@@ -1,9 +1,10 @@
 # ssl-check
 Wrapper for cURL and SSLscan for bulk checks with clean output
 
-usage: `sslcheck.py [-h] -i INPUT -o OUTPUT [-s] [-t] [-2] [-3] [-c] [-p] [-a] [-d]`
+Usage: `sslcheck.py [-h] -i INPUT -o OUTPUT [-s] [-t] [-2] [-3] [-c] [-p] [-a] [-d]`
+Options:
 ```
-options:
+
   -i INPUT, --input INPUT
                         List of IPs to check (can be a file with one IP per line, single IP or IP range) (default: None)
   -o OUTPUT, --output OUTPUT
@@ -16,4 +17,5 @@ options:
   -p, --csp             Check for CSP (default: False)
   -a, --all             Run all checks (default: False)
   -d, --debug           Debug mode (default: False)
+
 ```
