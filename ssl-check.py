@@ -14,18 +14,14 @@ requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 ap = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description='Wrapper for cURL and SSLscan for bulk checks with clean output')
 ap.add_argument('-i', '--input', required=True, help='List of IPs to check (can be a file with one IP per line, single IP or IP range)')
 ap.add_argument('-o', '--output', required=True, help='Output file')
-ap.add_argument('-s', '--hsts', help='Check for HSTS header', action="store_true")
 ap.add_argument('-t', '--tls', help='Check for TLSv1 and TLSv1.1', action="store_true")
 ap.add_argument('-2', '--sslv2', help='Check for SSLv2', action="store_true")
 ap.add_argument('-3', '--sslv3', help='Check for SSLv3', action="store_true")
 ap.add_argument('-c', '--certs', help='Check certs', action="store_true")
-ap.add_argument('-p', '--csp', help='Check for CSP', action="store_true")
 ap.add_argument('-a', '--all', help='Run all checks', action="store_true")
 ap.add_argument('-d', '--debug', help='Debug mode', action="store_true")
 args = ap.parse_args()
 if args.all:
-    args.hsts = True
-    args.csp = True
     args.certs = True
     args.sslv2 = True
     args.sslv3 = True
@@ -42,13 +38,11 @@ DETAIL = '\033[33m'
 OTHER = '\033[30m'
 
 
-all_hsts = []
 all_tls = []
 all_sslv2 = []
 all_sslv3 = []
 all_rc4 = []
 all_cbc = []
-all_csp = []
 
 
 def banner(args):
@@ -151,10 +145,6 @@ def scan_hosts(hosts):
                     check_sslv3(host)
                 if args.certs:
                     check_certs(host)
-                if args.csp:
-                    check_csp(host)
-                if args.hsts:
-                    check_hsts(host)
                 else:
                     pass
 
@@ -173,35 +163,6 @@ def check_alive(host):
         print(f"{INFO}[*] Output: {DETAIL}{output}{RST}")
         return True
 
-
-def check_csp(host):
-
-    data = {"URL": "https://" + host}
-    r = requests.post("https://csper.io/api/evaluations", json=data)
-
-    if "no policies found at URL" in r.text:
-        print(f"{BAD}[-] No CSP found{RST}")
-        all_csp.append(host)
-    else:
-        print(f"{GOOD}[+] CSP found{RST}")
-    debug_print(r.text)
-
-def check_hsts(host):
-
-    stream = os.popen(f"curl --connect-timeout 5 -L -s -k -I https://{host}")
-    output = stream.read().lower()
-    if "strict-transport-security" in output:
-        print(f"{GOOD}[+] HSTS is enabled{RST}")
-    # if we dont get anything the first time, try the other curl command
-    else:
-        stream = os.popen(f"curl --connect-timeout 5 -s -D- -L https://{host}")
-        output = stream.read().lower()
-        if "strict-transport-security" in output:
-            print(f"{GOOD}[+] HSTS is enabled{RST}")
-        else:
-            print(f"{BAD}[-] HSTS is not enabled{RST}")
-            all_hsts.append(host)
-    debug_print(output)
 
 def check_tls(host):
 
@@ -272,16 +233,6 @@ def check_certs(host):
 def write_hosts(output_file):
 
     f = open(output_file, "w")
-    if args.csp:
-        f.write("Hosts without CSP\n")
-        for line in all_csp:
-            f.write(line + "\n")
-        f.write("\n")
-    if args.hsts:
-        f.write("Hosts without HSTS\n")
-        for line in all_hsts:
-            f.write(line + "\n")
-        f.write("\n")
     if args.tls:
         f.write("Hosts with TLS issues\n")
         for line in all_tls:
